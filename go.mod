@@ -1,6 +1,6 @@
 module github.com/sunjiangjun/demo
 
-go 1.24.2
+go 1.22.2
 
 require github.com/sunjiangjun/xlog v1.0.0
 
