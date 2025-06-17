@@ -37,6 +37,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/your-repo:latest
-            ghcr.io/${{ github.repository_owner }}/your-repo:${{ steps.vars.outputs.tag }}
+          tags: ghcr.io/${{ github.actor }}/your-repo:latest
