@@ -1,4 +1,4 @@
-name: Build and Push Docker Image to GHCR
+name: Build and Push Docker Image to GHCR (User Account)
 
 on:
   push:
@@ -28,13 +28,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract short commit SHA
+      - name: Extract tag
         id: vars
         run: echo "tag=${{ github.event.inputs.tag || github.sha }}" >> "$GITHUB_OUTPUT"
 
-      - name: Build and Push Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.actor }}/your-repo:latest
+          tags: |
+            ghcr.io/${{ github.actor }}/your-repo:latest
+            ghcr.io/${{ github.actor }}/your-repo:${{ steps.vars.outputs.tag }}
