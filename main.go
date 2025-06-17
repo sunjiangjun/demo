@@ -1,14 +1,15 @@
 package main
 
 import (
-	"log"
+	"github.com/sunjiangjun/xlog"
 	"time"
 )
 
 func main() {
 
+	x := xlog.NewXLogger()
 	for true {
-		log.Println("Hello World")
+		x.Println("Hello World")
 		time.Sleep(10 * time.Second)
 	}
 
