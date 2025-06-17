@@ -1,12 +1,14 @@
-name: Build and Push Docker Image to GHCR (User Account)
+name: Build and Push Docker Image to GHCR
 
 on:
   push:
     branches: [ "main" ]
+    tags:       # 👈 支持 tag push
+      - "v*"
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Optional tag (defaults to commit SHA)'
+        description: 'Optional tag (defaults to commit SHA or Git tag)'
         required: false
         default: ''
 
@@ -28,9 +30,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract tag
+      - name: Determine tag
         id: vars
-        run: echo "tag=${{ github.event.inputs.tag || github.sha }}" >> "$GITHUB_OUTPUT"
+        run: |
+          # 如果是 git tag 触发，使用 GITHUB_REF_NAME；否则 fallback 到 commit SHA 或手动传入
+          TAG="${{ github.event.inputs.tag }}"
+          if [ -z "$TAG" ]; then
+            if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+              TAG="${GITHUB_REF#refs/tags/}"
+            else
+              TAG="${GITHUB_SHA}"
+            fi
+          fi
+          echo "Using tag: $TAG"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
